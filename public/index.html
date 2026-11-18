@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>YouTube Video Downloader - Multi-Quality HD & 4K</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="bg-glow bg-glow-1"></div>
+  <div class="bg-glow bg-glow-2"></div>
+
+  <header class="header">
+    <div class="container header-content">
+      <div class="logo">
+        <div class="logo-icon">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="5 3 19 12 5 21 5 3" fill="#ff0033" stroke="#ff0033"></polygon>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-title">YT<span class="accent">Stream</span>DL</span>
+          <span class="logo-subtitle">HD & 4K Video Downloader</span>
+        </div>
+      </div>
+      <div class="badge-engine">
+        <span class="pulse-dot"></span> Powered by yt-dlp & FFmpeg
+      </div>
+    </div>
+  </header>
+
+  <main class="container main-content">
+    <!-- Hero / Input Section -->
+    <section class="hero-section">
+      <h1 class="hero-title">Download YouTube Videos in <span class="gradient-text">Any Quality</span></h1>
+      <p class="hero-desc">Supports 4K UHD, 1080p Full HD, 720p, 480p, 360p & High Quality MP3 Audio with audio merged seamlessly.</p>
+
+      <form id="urlForm" class="search-form">
+        <div class="search-box">
+          <div class="search-icon">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="11" cy="11" r="8"></circle>
+              <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </div>
+          <input 
+            type="text" 
+            id="urlInput" 
+            placeholder="Paste YouTube video or Shorts link here (e.g. https://www.youtube.com/watch?v=...)" 
+            autocomplete="off"
+            required
+          />
+          <button type="button" id="pasteBtn" class="btn-paste" title="Paste from clipboard">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"></path>
+              <rect x="8" y="2" width="8" height="4" rx="1" ry="1"></rect>
+            </svg>
+            <span>Paste</span>
+          </button>
+          <button type="submit" id="fetchBtn" class="btn-fetch">
+            <span class="btn-text">Fetch Options</span>
+            <div class="spinner hidden" id="fetchSpinner"></div>
+          </button>
+        </div>
+      </form>
+
+      <!-- Quick sample video test chips -->
+      <div class="sample-links">
+        <span class="sample-label">Try sample:</span>
+        <button type="button" class="sample-chip" data-url="https://www.youtube.com/watch?v=jNQXAC9IVRw">
+          🎥 Me at the zoo (Classic 360p/240p)
+        </button>
+        <button type="button" class="sample-chip" data-url="https://www.youtube.com/watch?v=aqz-KE-bpKQ">
+          🌟 Big Buck Bunny (4K / 1080p 60fps)
+        </button>
+      </div>
+
+      <!-- Error / Alert Banner -->
+      <div id="errorBanner" class="error-banner hidden">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"></circle>
+          <line x1="12" y1="8" x2="12" y2="12"></line>
+          <line x1="12" y1="16" x2="12.01" y2="16"></line>
+        </svg>
+        <span id="errorMessage"></span>
+      </div>
+    </section>
+
+    <!-- Results Section -->
+    <section id="resultsSection" class="results-section hidden">
+      <!-- Video Details Header Card -->
+      <div class="video-card">
+        <div class="thumbnail-wrapper">
+          <img id="videoThumb" src="" alt="Thumbnail" />
+          <span id="videoDuration" class="duration-badge">00:00</span>
+        </div>
+        <div class="video-meta">
+          <h2 id="videoTitle" class="video-title">Video Title</h2>
+          <div class="channel-info">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+              <circle cx="12" cy="7" r="4"></circle>
+            </svg>
+            <span id="videoChannel" class="channel-name">Channel Name</span>
+          </div>
+          <div class="video-stats">
+            <span class="stat-pill">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+              <span id="videoViews">0 views</span>
+            </span>
+            <span class="stat-pill" id="videoDateWrapper">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                <line x1="16" y1="2" x2="16" y2="6"></line>
+                <line x1="8" y1="2" x2="8" y2="6"></line>
+                <line x1="3" y1="10" x2="21" y2="10"></line>
+              </svg>
+              <span id="videoDate">Date</span>
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Download Options Panel -->
+      <div class="download-panel">
+        <div class="panel-header">
+          <h3 class="panel-title">Available Download Formats</h3>
+          <div class="tab-buttons">
+            <button class="tab-btn active" id="tabVideo" data-tab="video">
+              🎬 Video (MP4)
+            </button>
+            <button class="tab-btn" id="tabAudio" data-tab="audio">
+              🎵 Audio (MP3/M4A)
+            </button>
+          </div>
+        </div>
+
+        <!-- Video Formats Table -->
+        <div id="videoFormatsTab" class="tab-content active">
+          <div class="table-responsive">
+            <table class="formats-table">
+              <thead>
+                <tr>
+                  <th>Resolution</th>
+                  <th>Format</th>
+                  <th>Est. File Size</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="videoFormatsBody">
+                <!-- Dynamic video rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Audio Formats Table -->
+        <div id="audioFormatsTab" class="tab-content">
+          <div class="table-responsive">
+            <table class="formats-table">
+              <thead>
+                <tr>
+                  <th>Audio Quality</th>
+                  <th>Format</th>
+                  <th>Est. File Size</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="audioFormatsBody">
+                <!-- Dynamic audio rows -->
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Download Progress Modal -->
+  <div id="downloadModal" class="modal-backdrop hidden">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title-wrap">
+          <div class="download-spinner-wrap">
+            <div class="spinner-ring" id="progressSpinner"></div>
+          </div>
+          <div>
+            <h3 class="modal-title" id="modalHeading">Preparing Download...</h3>
+            <p class="modal-subtitle" id="modalSub">Merging audio & video in full quality</p>
+          </div>
+        </div>
+        <button id="modalCloseBtn" class="btn-close" title="Close">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="selected-video-summary">
+          <span class="badge" id="modalQualityBadge">1080p MP4</span>
+          <span class="summary-title" id="modalVideoTitle">Video Title</span>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="progress-container">
+          <div class="progress-bar-bg">
+            <div id="progressBarFill" class="progress-bar-fill" style="width: 0%"></div>
+          </div>
+          <div class="progress-stats">
+            <span id="progressPercent" class="stat-pct">0%</span>
+            <div class="progress-details">
+              <span id="progressSpeed" class="stat-meta"></span>
+              <span id="progressEta" class="stat-meta"></span>
+            </div>
+          </div>
+        </div>
+
+        <div id="modalStatusText" class="status-msg">
+          Initiating download stream...
+        </div>
+
+        <div id="modalSuccessBox" class="success-box hidden">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#10b981" stroke-width="2">
+            <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+            <polyline points="22 4 12 14.01 9 11.01"></polyline>
+          </svg>
+          <div>
+            <strong>Download ready!</strong>
+            <p>Your browser should begin downloading automatically. If it doesn't, click below:</p>
+          </div>
+          <a id="directSaveBtn" class="btn-save" href="#" download>Save File</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <footer class="footer">
+    <div class="container footer-content">
+      <p>YTStreamDL — Fast, clean, local YouTube video and audio converter powered by yt-dlp & FFmpeg.</p>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
